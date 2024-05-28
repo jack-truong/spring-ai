@@ -17,17 +17,17 @@ public abstract class BaseChatControllerTest {
   protected ChatClient chatClient;
 
   protected void setupMockChatResponse(String prompt, String result) {
-    ChatResponse mockResponse = mock(ChatResponse.class);
-    Generation mockGeneration = mock(Generation.class);
-    AssistantMessage mockAssistantMessage = mock(AssistantMessage.class);
-    ChatResponseMetadata mockChatResponseMetadata = mock(ChatResponseMetadata.class);
+    ChatResponse response = mock(ChatResponse.class);
+    Generation generation = mock(Generation.class);
+    AssistantMessage assistantMessage = mock(AssistantMessage.class);
+    ChatResponseMetadata chatResponseMetadata = mock(ChatResponseMetadata.class);
 
-    when(mockResponse.getResult()).thenReturn(mockGeneration);
-    when(mockResponse.getMetadata()).thenReturn(mockChatResponseMetadata);
-    when(mockChatResponseMetadata.getUsage()).thenReturn(new EmptyUsage());
-    when(mockGeneration.getOutput()).thenReturn(mockAssistantMessage);
-    when(mockAssistantMessage.getContent()).thenReturn(result);
-    when(chatClient.call(new Prompt(prompt))).thenReturn(mockResponse);
+    when(response.getResult()).thenReturn(generation);
+    when(response.getMetadata()).thenReturn(chatResponseMetadata);
+    when(chatResponseMetadata.getUsage()).thenReturn(new EmptyUsage());
+    when(generation.getOutput()).thenReturn(assistantMessage);
+    when(assistantMessage.getContent()).thenReturn(result);
+    when(chatClient.call(new Prompt(prompt))).thenReturn(response);
   }
 
 }
