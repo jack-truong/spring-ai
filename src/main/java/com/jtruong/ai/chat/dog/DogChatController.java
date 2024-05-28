@@ -48,9 +48,7 @@ public class DogChatController extends BaseChatController {
   }
 
   @GetMapping("/characteristics")
-  public ResponseEntity<List<String>> getBreedCharacteristics(
-      @RequestParam(value = "breed") String breed
-  ) {
+  public ResponseEntity<List<String>> getBreedCharacteristics() {
     List<String> characteristics = Arrays.stream(Characteristic.values())
         .map(Characteristic::getName)
         .toList();
@@ -58,7 +56,7 @@ public class DogChatController extends BaseChatController {
   }
 
   @GetMapping("/details")
-  public ResponseEntity<BreedInfo> getBreedInfo(
+  public ResponseEntity<BreedInfo> getBreedDetails(
       @RequestParam(value = "breed") String breed,
       @RequestParam(value = "characteristics") List<String> characteristics
   ) {
@@ -77,7 +75,7 @@ public class DogChatController extends BaseChatController {
   }
 
   @GetMapping("/image-prompt")
-  public ResponseEntity<String> getImage(
+  public ResponseEntity<String> getImagePrompt(
       @RequestParam(value = "breed") String breed,
       @RequestParam(value = "environment") String environment,
       @RequestParam(value = "activity") String activity,
