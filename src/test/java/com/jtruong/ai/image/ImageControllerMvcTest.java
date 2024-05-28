@@ -6,13 +6,16 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.ai.image.Image;
 import org.springframework.ai.image.ImageClient;
 import org.springframework.ai.image.ImageGeneration;
 import org.springframework.ai.image.ImageGenerationMetadata;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
+import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,7 +39,11 @@ public class ImageControllerMvcTest {
   @Test
   public void image() throws Exception {
     // given
-    setupMockImageResponse("hello", "greetings");
+    String imageUrl = "https://imagepath.com";
+    String revisedPrompt = "This is the revised prompt";
+    setupMockImageResponse(imageUrl, revisedPrompt);
+
+    ImageInfo expected = new ImageInfo(revisedPrompt, imageUrl, null);
 
     // when
     ResultActions result = mvc.perform(
@@ -45,7 +52,7 @@ public class ImageControllerMvcTest {
     // then
     result
         .andExpect(status().isOk())
-        .andExpect(content().string(equalTo("greetings")));
+        .andExpect(content().string(equalTo(new ObjectMapper().writeValueAsString(expected))));
   }
 
   @Test
@@ -61,13 +68,17 @@ public class ImageControllerMvcTest {
         .andExpect(status().is5xxServerError());
   }
 
-  private void setupMockImageResponse(String prompt, String result) {
+  private void setupMockImageResponse(String url, String revisedPrompt) {
     ImageResponse imageResponse = mock(ImageResponse.class);
     ImageGeneration imageGeneration = mock(ImageGeneration.class);
-    ImageGenerationMetadata imageGenerationMetadata = mock(ImageGenerationMetadata.class);
+    Image image = mock(Image.class);
+    OpenAiImageGenerationMetadata imageGenerationMetadata = mock(OpenAiImageGenerationMetadata.class);
 
+    when(imageGeneration.getOutput()).thenReturn(image);
+    when(image.getUrl()).thenReturn(url);
+    when(imageGenerationMetadata.getRevisedPrompt()).thenReturn(revisedPrompt);
     when(imageGeneration.getMetadata()).thenReturn(imageGenerationMetadata);
     when(imageResponse.getResult()).thenReturn(imageGeneration);
-    when(imageClient.call(new ImagePrompt(prompt))).thenReturn(imageResponse);
+    when(imageClient.call(Mockito.any(ImagePrompt.class))).thenReturn(imageResponse);
   }
 }

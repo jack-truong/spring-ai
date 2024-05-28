@@ -27,6 +27,9 @@ public class ChatController extends BaseChatController {
   @Value("classpath:/prompts/environments.st")
   private Resource environments;
 
+  @Value("classpath:/prompts/instruments.st")
+  private Resource instruments;
+
   @Value("classpath:/prompts/foods.st")
   private Resource foods;
 
@@ -45,30 +48,33 @@ public class ChatController extends BaseChatController {
 
   @GetMapping("/activities")
   public ResponseEntity<List<String>> getActivities() {
-    ListPromptParser listPromptParser = new ListPromptParser(activities);
-
-    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
-    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
+    return getListResponse(activities);
   }
 
   @GetMapping("/environments")
   public ResponseEntity<List<String>> getEnvironments() {
-    ListPromptParser listPromptParser = new ListPromptParser(environments);
+    return getListResponse(environments);
+  }
 
-    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
-    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
+  @GetMapping("/instruments")
+  public ResponseEntity<List<String>> getInstruments() {
+    return getListResponse(instruments);
   }
 
   @GetMapping("/foods")
   public ResponseEntity<List<String>> getFoods() {
-    ListPromptParser listPromptParser = new ListPromptParser(foods);
-
-    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
-    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
+    return getListResponse(foods);
   }
 
   @Override
   protected Logger getLogger() {
     return logger;
+  }
+
+  private ResponseEntity<List<String>> getListResponse(Resource resource) {
+    ListPromptParser listPromptParser = new ListPromptParser(resource);
+
+    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
+    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
   }
 }
