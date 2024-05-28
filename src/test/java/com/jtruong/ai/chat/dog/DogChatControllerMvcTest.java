@@ -1,6 +1,7 @@
 package com.jtruong.ai.chat.dog;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,8 +18,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.util.FileCopyUtils;
@@ -74,8 +77,8 @@ class DogChatControllerMvcTest extends BaseChatControllerTest {
     BreedInfo breedInfo = new BreedInfo(
         "pug",
         List.of(
-            new CharacteristicInfo("origin", "Japan"),
-            new CharacteristicInfo("lifespan", "12-15 years")
+            new CharacteristicInfo(Characteristic.Origin.getName(), "Japan"),
+            new CharacteristicInfo(Characteristic.Lifespan.getName(), "12-15 years")
         )
     );
     String expectedBreedInfoString = new ObjectMapper().writeValueAsString(breedInfo);
@@ -91,6 +94,17 @@ class DogChatControllerMvcTest extends BaseChatControllerTest {
         .andExpect(status().isOk())
         .andExpect(
             content().string(equalTo(expectedBreedInfoString)));
+  }
+
+  @Test
+  void getBreedDetailsWithBadCharacteristicsPassedIn() throws Exception {
+    // when
+    MvcResult mvcResult = mvc.perform(
+        MockMvcRequestBuilders.get("/ai/dog/details?breed=pug&characteristics=foo")
+            .accept(MediaType.APPLICATION_JSON)).andReturn();
+
+    // then
+    assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
   }
 
   @Test
