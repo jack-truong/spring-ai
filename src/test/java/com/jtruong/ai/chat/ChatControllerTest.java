@@ -6,14 +6,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.ai.chat.ChatClient;
+import org.mockito.Mockito;
+import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.client.RestClientException;
 
 @WebMvcTest(ChatController.class)
 public class ChatControllerTest extends BaseChatControllerTest {
@@ -33,5 +34,18 @@ public class ChatControllerTest extends BaseChatControllerTest {
 		result
 				.andExpect(status().isOk())
 				.andExpect(content().string(equalTo("greetings")));
+	}
+
+	@Test
+	public void testPromptWithException() throws Exception {
+		// given
+		when(chatClient.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
+
+		// when
+		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=hello").accept(MediaType.APPLICATION_JSON));
+
+		// then
+		result
+				.andExpect(status().is5xxServerError());
 	}
 }
