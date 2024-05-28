@@ -1,4 +1,4 @@
-package com.jtruong.ai.chat;
+package com.jtruong.ai.chat.dog;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -13,6 +13,7 @@ public enum Characteristic {
   HealthIssues("health issues"),
   Popularity("popularity"),
   Cost("cost"),
+  FunnyStory("funny story")
   ;
   private final String name;
 

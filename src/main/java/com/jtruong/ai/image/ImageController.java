@@ -2,10 +2,14 @@ package com.jtruong.ai.image;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.ai.image.Image;
 import org.springframework.ai.image.ImageClient;
+import org.springframework.ai.image.ImageGenerationMetadata;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.OpenAiImageOptions;
+import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +28,7 @@ public class ImageController {
   }
 
   @GetMapping("/image")
-  public String getImage(@RequestParam(value = "prompt") String prompt,
+  public ResponseEntity<ImageInfo> getImage(@RequestParam(value = "prompt") String prompt,
       @RequestParam(value = "useB64Json", defaultValue = "false") Boolean useB64Json) {
     ImageResponse response = callAndLogMetadata(
         new ImagePrompt(prompt,
@@ -33,7 +37,13 @@ public class ImageController {
                 .build()
         )
     );
-    return response.toString();
+    Image output = response.getResult().getOutput();
+    String metadata = getImageMetadata(response.getResult().getMetadata());
+    return ResponseEntity.ok(new ImageInfo(metadata, output.getUrl(), output.getB64Json()));
+  }
+
+  private static String getImageMetadata(ImageGenerationMetadata metadata) {
+    return metadata instanceof OpenAiImageGenerationMetadata ? ((OpenAiImageGenerationMetadata)metadata).getRevisedPrompt() : metadata.toString();
   }
 
   private ImageResponse callAndLogMetadata(ImagePrompt prompt) {
