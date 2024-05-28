@@ -19,28 +19,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ChatControllerMvcTest {
+public class ChatControllerMvcTest extends BaseChatControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
 
-	@MockBean
-	private ChatClient chatClient;
-
-	@MockBean
-	private ImageClient imageClient;
-
 	@Test
 	public void prompt() throws Exception {
 		// given
-		when(chatClient.call("foo")).thenReturn("bar");
+		setupMockChatResponse("hello", "greetings");
 
 		// when
-		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=foo").accept(MediaType.APPLICATION_JSON));
+		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=hello").accept(MediaType.APPLICATION_JSON));
 
 		// then
 		result
 				.andExpect(status().isOk())
-				.andExpect(content().string(equalTo("bar")));
+				.andExpect(content().string(equalTo("greetings")));
 	}
 }

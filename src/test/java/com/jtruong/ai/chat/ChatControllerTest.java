@@ -16,25 +16,22 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @WebMvcTest(ChatController.class)
-public class ChatControllerTest {
+public class ChatControllerTest extends BaseChatControllerTest {
 
 	@Autowired
 	private MockMvc mvc;
 
-	@MockBean
-	private ChatClient chatClient;
-
 	@Test
 	public void chat() throws Exception {
 		// given
-		when(chatClient.call("foo")).thenReturn("bar");
+		setupMockChatResponse("hello", "greetings");
 
 		// when
-		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=foo").accept(MediaType.APPLICATION_JSON));
+		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=hello").accept(MediaType.APPLICATION_JSON));
 
 		// then
 		result
 				.andExpect(status().isOk())
-				.andExpect(content().string(equalTo("bar")));
+				.andExpect(content().string(equalTo("greetings")));
 	}
 }

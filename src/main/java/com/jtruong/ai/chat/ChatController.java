@@ -34,7 +34,7 @@ public class ChatController {
 
     @GetMapping("/chat")
     public String getPrompt(@RequestParam(value = "prompt") String prompt) {
-        PromptTemplate promptTemplate = new PromptTemplate(breedsPrompt);
+        PromptTemplate promptTemplate = new PromptTemplate(prompt);
         Prompt chatPrompt = promptTemplate.create();
 
         ChatResponse response = callAndLogMetadata(chatPrompt);
