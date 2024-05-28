@@ -1,3 +1,3 @@
-Give a random list of 30 foods like "kiwi", "spaghetti", "tacos"
+Give a random list of 50 foods like "kiwi", "spaghetti", "tacos"
 sorted alphabetically
 {format}
