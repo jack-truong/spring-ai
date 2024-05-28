@@ -43,6 +43,7 @@ public class ImageController {
   }
 
   private static String getImageMetadata(ImageGenerationMetadata metadata) {
+    // This is knowingly not ideal, but want to extract the prompt from the OpenAI revisedPrompt metadata and not return the whole string
     return metadata instanceof OpenAiImageGenerationMetadata ? ((OpenAiImageGenerationMetadata)metadata).getRevisedPrompt() : metadata.toString();
   }
 
