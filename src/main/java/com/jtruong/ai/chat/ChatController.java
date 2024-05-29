@@ -1,6 +1,7 @@
 package com.jtruong.ai.chat;
 
 import com.jtruong.ai.prompts.ListPromptParser;
+import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,14 @@ public class ChatController extends BaseChatController {
   @GetMapping("/foods")
   public ResponseEntity<List<String>> getFoods() {
     return getListResponse(foods);
+  }
+
+  @GetMapping("/colors")
+  public ResponseEntity<List<String>> getColors() {
+    List<String> colors = Arrays.stream(Color.values())
+        .map(Color::getName)
+        .toList();
+    return ResponseEntity.ok(colors);
   }
 
   @Override
