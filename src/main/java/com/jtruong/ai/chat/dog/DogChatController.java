@@ -80,7 +80,8 @@ public class DogChatController extends BaseChatController {
       @RequestParam(value = "environment") String environment,
       @RequestParam(value = "activity") String activity,
       @RequestParam(value = "instrument") String instrument,
-      @RequestParam(value = "food") String food
+      @RequestParam(value = "food") String food,
+      @RequestParam(value = "color", defaultValue = "") String color
   ) {
     PromptTemplate promptTemplate = new PromptTemplate(dogImagePrompt);
     Prompt prompt = promptTemplate.create(
@@ -89,7 +90,8 @@ public class DogChatController extends BaseChatController {
             "environment", environment,
             "activity", activity,
             "instrument", instrument,
-            "food", food
+            "food", food,
+            "color", color
         )
     );
 

@@ -49,7 +49,7 @@ public class ImageController {
 
   private ImageResponse callAndLogMetadata(ImagePrompt prompt) {
     ImageResponse response = imageClient.call(prompt);
-    logger.info("Prompt metadata: {}", response.getResult().getMetadata().toString());
+    logger.info("Prompt metadata: {}", getImageMetadata(response.getResult().getMetadata()));
     return response;
   }
 }
