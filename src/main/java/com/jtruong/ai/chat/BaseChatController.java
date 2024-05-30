@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public abstract class BaseChatController {
   private final ChatClient chatClient;
@@ -16,7 +17,7 @@ public abstract class BaseChatController {
 
   protected ChatResponse callAndLogMetadata(Prompt prompt) {
     ChatResponse response = chatClient.call(prompt);
-    getLogger().info("Usage: {}", response.getMetadata().getUsage());
+    getLogger().info("Request: {}, Usage: {}", ServletUriComponentsBuilder.fromCurrentRequest().build(), response.getMetadata().getUsage());
     return response;
   }
 }
