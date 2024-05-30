@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/ai")
@@ -49,7 +50,7 @@ public class ImageController {
 
   private ImageResponse callAndLogMetadata(ImagePrompt prompt) {
     ImageResponse response = imageClient.call(prompt);
-    logger.info("Prompt metadata: {}", getImageMetadata(response.getResult().getMetadata()));
+    logger.info("Request: {}, Prompt metadata: {}", ServletUriComponentsBuilder.fromCurrentRequest().build(), getImageMetadata(response.getResult().getMetadata()));
     return response;
   }
 }
