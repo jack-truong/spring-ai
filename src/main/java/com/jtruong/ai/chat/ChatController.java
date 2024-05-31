@@ -70,7 +70,7 @@ public class ChatController extends BaseChatController {
   @GetMapping("/colors")
   public ResponseEntity<List<String>> getColors() {
     List<String> colors = Arrays.stream(Color.values())
-        .map(Color::getName)
+        .map(Color::name)
         .toList();
     return ResponseEntity.ok(colors);
   }

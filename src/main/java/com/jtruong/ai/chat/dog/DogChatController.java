@@ -1,6 +1,7 @@
 package com.jtruong.ai.chat.dog;
 
 import com.jtruong.ai.chat.BaseChatController;
+import com.jtruong.ai.chat.Color;
 import com.jtruong.ai.prompts.BeanPromptParser;
 import com.jtruong.ai.prompts.ListPromptParser;
 import java.util.Arrays;
@@ -50,7 +51,7 @@ public class DogChatController extends BaseChatController {
   @GetMapping("/characteristics")
   public ResponseEntity<List<String>> getBreedCharacteristics() {
     List<String> characteristics = Arrays.stream(Characteristic.values())
-        .map(Characteristic::getName)
+        .map(Characteristic::name)
         .toList();
     return ResponseEntity.ok(characteristics);
   }
@@ -81,8 +82,9 @@ public class DogChatController extends BaseChatController {
       @RequestParam(value = "activity") String activity,
       @RequestParam(value = "instrument") String instrument,
       @RequestParam(value = "food") String food,
-      @RequestParam(value = "color", defaultValue = "") String color
+      @RequestParam(value = "color") String color
   ) {
+    color = color.equals(Color.Default.name()) ? "" : color;
     PromptTemplate promptTemplate = new PromptTemplate(dogImagePrompt);
     Prompt prompt = promptTemplate.create(
         Map.of(
@@ -100,9 +102,7 @@ public class DogChatController extends BaseChatController {
 
   private void validateCharacteristics(List<String> characteristics) {
     for (String characteristic : characteristics) {
-      if (Characteristic.fromName(characteristic).isEmpty()) {
-        throw new IllegalArgumentException("Unknown characteristic specified: " + characteristic);
-      }
+      Characteristic.valueOf(characteristic);
     }
   }
 
