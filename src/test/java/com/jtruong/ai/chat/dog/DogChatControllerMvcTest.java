@@ -56,7 +56,7 @@ class DogChatControllerMvcTest extends BaseChatControllerTest {
   void getBreedCharacteristics() throws Exception {
     // given
     List<String> characteristics = Arrays.stream(Characteristic.values())
-        .map(Characteristic::getName)
+        .map(Characteristic::name)
         .toList();
     setupMockChatResponse(String.join(",", characteristics));
 
@@ -77,8 +77,8 @@ class DogChatControllerMvcTest extends BaseChatControllerTest {
     BreedInfo breedInfo = new BreedInfo(
         "pug",
         List.of(
-            new CharacteristicInfo(Characteristic.Origin.getName(), "Japan"),
-            new CharacteristicInfo(Characteristic.Lifespan.getName(), "12-15 years")
+            new CharacteristicInfo(Characteristic.Origin.name(), "Japan"),
+            new CharacteristicInfo(Characteristic.Lifespan.name(), "12-15 years")
         )
     );
     String expectedBreedInfoString = new ObjectMapper().writeValueAsString(breedInfo);
@@ -86,7 +86,7 @@ class DogChatControllerMvcTest extends BaseChatControllerTest {
 
     // when
     ResultActions result = mvc.perform(
-        MockMvcRequestBuilders.get("/ai/dog/details?breed=pug&characteristics=origin,cost")
+        MockMvcRequestBuilders.get("/ai/dog/details?breed=pug&characteristics=Origin,Cost")
             .accept(MediaType.APPLICATION_JSON));
 
     // then
@@ -120,12 +120,13 @@ class DogChatControllerMvcTest extends BaseChatControllerTest {
         .replace("{activity}", "flying")
         .replace("{instrument}", "drums")
         .replace("{food}", "yogurt")
+        .replace("{color}", "Orange")
     ;
 
     // when
     ResultActions result = mvc.perform(
         MockMvcRequestBuilders.get(
-                "/ai/dog/image-prompt?breed=pug&environment=space&activity=flying&instrument=drums&food=yogurt")
+                "/ai/dog/image-prompt?breed=pug&environment=space&activity=flying&instrument=drums&food=yogurt&color=Orange")
             .accept(MediaType.APPLICATION_JSON));
 
     // then
