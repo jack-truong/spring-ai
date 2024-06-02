@@ -1,4 +1,4 @@
-package com.jtruong.ai;
+package com.jtruong.ai.rest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
