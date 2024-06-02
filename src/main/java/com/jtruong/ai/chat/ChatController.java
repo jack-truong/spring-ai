@@ -1,6 +1,5 @@
 package com.jtruong.ai.chat;
 
-import com.jtruong.ai.prompts.ListPromptParser;
 import java.util.Arrays;
 import java.util.List;
 import org.slf4j.Logger;
@@ -23,16 +22,16 @@ public class ChatController extends BaseChatController {
   private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
   @Value("classpath:/prompts/activities.st")
-  private Resource activities;
+  private Resource activitiesPrompt;
 
   @Value("classpath:/prompts/environments.st")
-  private Resource environments;
+  private Resource environmentsPrompt;
 
   @Value("classpath:/prompts/instruments.st")
-  private Resource instruments;
+  private Resource instrumentsPrompt;
 
   @Value("classpath:/prompts/foods.st")
-  private Resource foods;
+  private Resource foodsPrompt;
 
   public ChatController(ChatClient chatClient) {
     super(chatClient);
@@ -49,22 +48,22 @@ public class ChatController extends BaseChatController {
 
   @GetMapping("/activities")
   public ResponseEntity<List<String>> getActivities() {
-    return getListResponse(activities);
+    return getListResponse(activitiesPrompt);
   }
 
   @GetMapping("/environments")
   public ResponseEntity<List<String>> getEnvironments() {
-    return getListResponse(environments);
+    return getListResponse(environmentsPrompt);
   }
 
   @GetMapping("/instruments")
   public ResponseEntity<List<String>> getInstruments() {
-    return getListResponse(instruments);
+    return getListResponse(instrumentsPrompt);
   }
 
   @GetMapping("/foods")
   public ResponseEntity<List<String>> getFoods() {
-    return getListResponse(foods);
+    return getListResponse(foodsPrompt);
   }
 
   @GetMapping("/colors")

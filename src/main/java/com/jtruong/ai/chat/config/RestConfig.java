@@ -1,5 +1,6 @@
-package com.jtruong.ai.rest;
+package com.jtruong.ai.chat.config;
 
+import com.jtruong.ai.rest.CustomRestTemplateCustomizer;
 import java.time.Duration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
