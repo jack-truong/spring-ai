@@ -23,6 +23,6 @@ public class CustomClientHttpRequestInterceptor implements ClientHttpRequestInte
   }
 
   private void logRequestDetails(HttpRequest request) {
-    logger.info("Request URI: {}", request.getURI());
+    logger.info("Request method: {}, URI: {}", request.getMethod(), request.getURI().getPath());
   }
 }
