@@ -79,11 +79,4 @@ public class ChatController extends BaseChatController {
   protected Logger getLogger() {
     return logger;
   }
-
-  private ResponseEntity<List<String>> getListResponse(Resource resource) {
-    ListPromptParser listPromptParser = new ListPromptParser(resource);
-
-    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
-    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
-  }
 }

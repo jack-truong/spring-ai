@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @SpringBootTest
-class RestApplicationTests {
+class AiApplicationTests {
 
 	@Autowired
 	private ChatController chatController;
