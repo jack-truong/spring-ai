@@ -3,14 +3,16 @@ package com.jtruong.ai.chat.stock;
 import com.jtruong.ai.chat.BaseChatController;
 import com.jtruong.ai.chat.stock.Stocks.StockHistorical;
 import com.jtruong.ai.prompts.BeanPromptParser;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.ChatClient;
 import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -24,14 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/ai/stock")
 public class StockController extends BaseChatController {
-
   private static final Logger logger = LoggerFactory.getLogger(StockController.class);
+  private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
   @Value("classpath:/prompts/stocks.st")
   private Resource stocksPrompt;
 
   @Value("classpath:/prompts/stocksHistorical.st")
   private Resource stocksHistoricalPrompt;
+
+  @Value("classpath:/prompts/stocksHistoricalGains.st")
+  private Resource stocksHistoricalGainsPrompt;
 
   public StockController(ChatClient chatClient) {
     super(chatClient);
@@ -47,15 +52,13 @@ public class StockController extends BaseChatController {
       @PathVariable(value = "symbol") String symbol,
       @RequestParam(value = "numberOfDays") Integer numberOfDays
   ) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     BeanPromptParser<StockHistorical> beanPromptParser = new BeanPromptParser<>(
         StockHistorical.class,
         stocksHistoricalPrompt,
         Map.of(
             "symbol", symbol,
             "days", numberOfDays,
-            "currentDate", simpleDateFormat.format(new Date())
+            "currentDate", DATE_TIME_FORMATTER.format(LocalDate.now())
         )
     );
 
@@ -65,6 +68,26 @@ public class StockController extends BaseChatController {
     ChatResponse response = callAndLogMetadata(beanPromptParser.getPrompt(chatOptions));
 
     return ResponseEntity.ok(beanPromptParser.parse(response.getResult().getOutput().getContent()));
+  }
+
+  @GetMapping("/historical/gains")
+  public ResponseEntity<String> getHistoricalGains(
+      @RequestParam(value = "symbols") List<String> symbols,
+      @RequestParam(value = "numberOfDays") Integer numberOfDays
+  ) {
+    PromptTemplate promptTemplate = new PromptTemplate(stocksHistoricalGainsPrompt);
+
+    OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
+        .withFunction("historicalStockPricesFunction")
+        .build();
+    Prompt prompt = new Prompt(promptTemplate.create(Map.of(
+        "symbols", String.join(",", symbols),
+        "days", numberOfDays,
+        "currentDate", DATE_TIME_FORMATTER.format(LocalDate.now())
+    )).getInstructions(), chatOptions);
+    ChatResponse response = callAndLogMetadata(prompt);
+
+    return ResponseEntity.ok(response.getResult().getOutput().getContent());
   }
 
   @Override
