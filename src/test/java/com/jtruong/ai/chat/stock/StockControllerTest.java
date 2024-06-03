@@ -6,7 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jtruong.ai.chat.BaseChatControllerTest;
+import com.jtruong.ai.chat.stock.Stocks.StockGain;
 import com.jtruong.ai.chat.stock.Stocks.StockHistorical;
+import com.jtruong.ai.chat.stock.Stocks.StockRecommendation;
 import com.jtruong.ai.chat.stock.Stocks.StockValue;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -64,16 +66,22 @@ class StockControllerTest extends BaseChatControllerTest {
   @Test
   void getHistoricalGains() throws Exception {
     // given
-    String response = "We recommend APPL";
-    setupMockChatResponse(response);
+    StockRecommendation stockRecommendation = new StockRecommendation(
+        "Pick APPL",
+        List.of(
+            new StockGain("APPL", new StockValue("2024-01-01", 99), new StockValue("2024-01-02", 100), 1.3),
+            new StockGain("GOOGL", new StockValue("2024-01-01", 33), new StockValue("2024-01-02", 33.1), 0.12)
+        )
+    );
+    setupMockChatResponse(new ObjectMapper().writeValueAsString(stockRecommendation));
 
     // when
     ResultActions result = mvc.perform(
-        MockMvcRequestBuilders.get(String.format("/ai/stock/historical/gains?symbols=APPL,GOOGL&numberOfDays=30")).accept(MediaType.APPLICATION_JSON));
+        MockMvcRequestBuilders.get("/ai/stock/historical/gains?symbols=APPL,GOOGL&numberOfDays=30").accept(MediaType.APPLICATION_JSON));
 
     // then
     result
         .andExpect(status().isOk())
-        .andExpect(content().string(equalTo(response)));
+        .andExpect(content().string(equalTo(new ObjectMapper().writeValueAsString(stockRecommendation))));
   }
 }
