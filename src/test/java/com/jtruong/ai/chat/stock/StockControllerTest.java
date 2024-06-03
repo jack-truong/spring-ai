@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jtruong.ai.chat.BaseChatControllerTest;
+import com.jtruong.ai.chat.stock.Stocks.Stock;
 import com.jtruong.ai.chat.stock.Stocks.StockGain;
 import com.jtruong.ai.chat.stock.Stocks.StockHistorical;
 import com.jtruong.ai.chat.stock.Stocks.StockRecommendation;
@@ -30,8 +31,11 @@ class StockControllerTest extends BaseChatControllerTest {
   @Test
   void getStocks() throws Exception {
     // given
-    List<String> symbols = List.of("AMZN", "GOOGL", "TSLA");
-    setupMockChatResponse(String.join(",", symbols));
+    List<Stock> symbols = List.of(
+        new Stock("AMZN", "Amazon"),
+        new Stock("GOOGL", "Google")
+    );
+    setupMockChatResponse(new ObjectMapper().writeValueAsString(symbols));
 
     // when
     ResultActions result = mvc.perform(
