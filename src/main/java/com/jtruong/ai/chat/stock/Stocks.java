@@ -3,6 +3,8 @@ package com.jtruong.ai.chat.stock;
 import java.util.List;
 
 public interface Stocks {
+  record Stock(String symbol, String company) { }
+
   record StockHistorical(String symbol, List<StockValue> historical) { }
   record StockValue(String date, double close) {}
 
