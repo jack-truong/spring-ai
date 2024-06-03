@@ -2,6 +2,7 @@ package com.jtruong.ai.chat.stock;
 
 import com.jtruong.ai.chat.BaseChatController;
 import com.jtruong.ai.chat.stock.Stocks.StockHistorical;
+import com.jtruong.ai.chat.stock.Stocks.StockRecommendation;
 import com.jtruong.ai.prompts.BeanPromptParser;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -71,23 +72,26 @@ public class StockController extends BaseChatController {
   }
 
   @GetMapping("/historical/gains")
-  public ResponseEntity<String> getHistoricalGains(
+  public ResponseEntity<StockRecommendation> getHistoricalGains(
       @RequestParam(value = "symbols") List<String> symbols,
       @RequestParam(value = "numberOfDays") Integer numberOfDays
   ) {
-    PromptTemplate promptTemplate = new PromptTemplate(stocksHistoricalGainsPrompt);
+    BeanPromptParser<StockRecommendation> beanPromptParser = new BeanPromptParser<>(
+        StockRecommendation.class,
+        stocksHistoricalGainsPrompt,
+        Map.of(
+            "symbols", String.join(",", symbols),
+            "days", numberOfDays,
+            "currentDate", DATE_TIME_FORMATTER.format(LocalDate.now())
+        )
+    );
 
     OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
         .withFunction("historicalStockPricesFunction")
         .build();
-    Prompt prompt = new Prompt(promptTemplate.create(Map.of(
-        "symbols", String.join(",", symbols),
-        "days", numberOfDays,
-        "currentDate", DATE_TIME_FORMATTER.format(LocalDate.now())
-    )).getInstructions(), chatOptions);
-    ChatResponse response = callAndLogMetadata(prompt);
+    ChatResponse response = callAndLogMetadata(beanPromptParser.getPrompt(chatOptions));
 
-    return ResponseEntity.ok(response.getResult().getOutput().getContent());
+    return ResponseEntity.ok(beanPromptParser.parse(response.getResult().getOutput().getContent()));
   }
 
   @Override
