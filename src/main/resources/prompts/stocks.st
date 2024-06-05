@@ -1,3 +1,3 @@
-Give me 25 different stock symbols from diverisified industries where some are big some are small, but always include Dogecoin.
+Give me 40 different stock symbols from diverisified industries from both large and small companies.
 Sort them alphabetically.
 {format}
