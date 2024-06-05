@@ -73,8 +73,8 @@ class StockControllerTest extends BaseChatControllerTest {
     StockRecommendation stockRecommendation = new StockRecommendation(
         "Pick APPL",
         List.of(
-            new StockGain("APPL", new StockValue("2024-01-01", 99), new StockValue("2024-01-02", 100), 1.3),
-            new StockGain("GOOGL", new StockValue("2024-01-01", 33), new StockValue("2024-01-02", 33.1), 0.12)
+            new StockGain("APPL", new StockValue("2024-01-01", 99), new StockValue("2024-01-02", 101), new StockValue("2024-01-03", 101), 1.3),
+            new StockGain("GOOGL", new StockValue("2024-01-01", 33), new StockValue("2024-01-02", 33.1), new StockValue("2024-01-03", 33.2), 0.12)
         )
     );
     setupMockChatResponse(new ObjectMapper().writeValueAsString(stockRecommendation));
