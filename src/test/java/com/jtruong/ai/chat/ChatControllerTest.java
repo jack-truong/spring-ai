@@ -39,7 +39,7 @@ public class ChatControllerTest extends BaseChatControllerTest {
 	@Test
 	public void testPromptWithException() throws Exception {
 		// given
-		when(chatClient.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
+		when(chatModel.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
 
 		// when
 		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=hello").accept(MediaType.APPLICATION_JSON));

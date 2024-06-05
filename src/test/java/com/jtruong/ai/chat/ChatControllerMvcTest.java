@@ -7,8 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -68,7 +66,7 @@ public class ChatControllerMvcTest extends BaseChatControllerTest {
 	@Test
 	public void testPromptWithException() throws Exception {
 		// given
-		when(chatClient.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
+		when(chatModel.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
 
 		// when
 		ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/chat?prompt=hello").accept(MediaType.APPLICATION_JSON));

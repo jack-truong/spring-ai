@@ -10,9 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ai.image.Image;
-import org.springframework.ai.image.ImageClient;
 import org.springframework.ai.image.ImageGeneration;
-import org.springframework.ai.image.ImageGenerationMetadata;
+import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
@@ -34,7 +33,7 @@ public class ImageControllerMvcTest {
   private MockMvc mvc;
 
   @MockBean
-  protected ImageClient imageClient;
+  protected ImageModel imageModel;
 
   @Test
   public void image() throws Exception {
@@ -47,7 +46,7 @@ public class ImageControllerMvcTest {
 
     // when
     ResultActions result = mvc.perform(
-        MockMvcRequestBuilders.get("/ai/image?prompt=hello").accept(MediaType.APPLICATION_JSON));
+        MockMvcRequestBuilders.get("/ai/image/creation?prompt=hello").accept(MediaType.APPLICATION_JSON));
 
     // then
     result
@@ -58,10 +57,10 @@ public class ImageControllerMvcTest {
   @Test
   public void testPromptWithException() throws Exception {
     // given
-    when(imageClient.call(Mockito.any(ImagePrompt.class))).thenThrow(new RestClientException(""));
+    when(imageModel.call(Mockito.any(ImagePrompt.class))).thenThrow(new RestClientException(""));
 
     // when
-    ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/image?prompt=hello").accept(MediaType.APPLICATION_JSON));
+    ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/image/creation?prompt=hello").accept(MediaType.APPLICATION_JSON));
 
     // then
     result
@@ -79,6 +78,6 @@ public class ImageControllerMvcTest {
     when(imageGenerationMetadata.getRevisedPrompt()).thenReturn(revisedPrompt);
     when(imageGeneration.getMetadata()).thenReturn(imageGenerationMetadata);
     when(imageResponse.getResult()).thenReturn(imageGeneration);
-    when(imageClient.call(Mockito.any(ImagePrompt.class))).thenReturn(imageResponse);
+    when(imageModel.call(Mockito.any(ImagePrompt.class))).thenReturn(imageResponse);
   }
 }

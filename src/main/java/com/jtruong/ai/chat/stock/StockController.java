@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.ChatClient;
-import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -41,8 +41,8 @@ public class StockController extends BaseChatController {
   @Value("classpath:/prompts/stocksHistoricalGains.st")
   private Resource stocksHistoricalGainsPrompt;
 
-  public StockController(ChatClient chatClient) {
-    super(chatClient);
+  public StockController(ChatModel chatModel) {
+    super(chatModel);
   }
 
   @GetMapping("/stocks")

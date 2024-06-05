@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.chat.ChatClient;
-import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,8 +36,8 @@ public class DogChatController extends BaseChatController {
   @Value("classpath:/prompts/dogImage.st")
   private Resource dogImagePrompt;
 
-  public DogChatController(ChatClient chatClient) {
-    super(chatClient);
+  public DogChatController(ChatModel chatModel) {
+    super(chatModel);
   }
 
   @GetMapping("/breeds")
