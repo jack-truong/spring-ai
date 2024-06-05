@@ -33,7 +33,7 @@ public class ChatControllerIT extends BaseChatControllerTest {
   @Test
   public void testPromptWithException() throws Exception {
     // given
-    when(chatClient.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
+    when(chatModel.call(Mockito.any(Prompt.class))).thenThrow(new RestClientException(""));
 
     // when
     ResponseEntity<String> response = template.getForEntity("/ai/chat?prompt=hello", String.class);

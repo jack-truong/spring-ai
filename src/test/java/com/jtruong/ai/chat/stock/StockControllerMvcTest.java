@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class StockControllerTest extends BaseChatControllerTest {
+class StockControllerMvcTest extends BaseChatControllerTest {
 
   @Autowired
   private MockMvc mvc;

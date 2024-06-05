@@ -4,9 +4,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.mockito.Mockito;
-import org.springframework.ai.chat.ChatClient;
-import org.springframework.ai.chat.ChatResponse;
-import org.springframework.ai.chat.Generation;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.chat.model.Generation;
 import org.springframework.ai.chat.messages.AssistantMessage;
 import org.springframework.ai.chat.metadata.ChatResponseMetadata;
 import org.springframework.ai.chat.metadata.EmptyUsage;
@@ -15,7 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 public abstract class BaseChatControllerTest {
   @MockBean
-  protected ChatClient chatClient;
+  protected ChatModel chatModel;
 
   protected void setupMockChatResponse(String prompt, String result) {
     ChatResponse response = mock(ChatResponse.class);
@@ -28,7 +28,7 @@ public abstract class BaseChatControllerTest {
     when(chatResponseMetadata.getUsage()).thenReturn(new EmptyUsage());
     when(generation.getOutput()).thenReturn(assistantMessage);
     when(assistantMessage.getContent()).thenReturn(result);
-    when(chatClient.call(new Prompt(prompt))).thenReturn(response);
+    when(chatModel.call(new Prompt(prompt))).thenReturn(response);
   }
 
   protected void setupMockChatResponse(String result) {
@@ -42,6 +42,6 @@ public abstract class BaseChatControllerTest {
     when(chatResponseMetadata.getUsage()).thenReturn(new EmptyUsage());
     when(generation.getOutput()).thenReturn(assistantMessage);
     when(assistantMessage.getContent()).thenReturn(result);
-    when(chatClient.call(Mockito.any(Prompt.class))).thenReturn(response);
+    when(chatModel.call(Mockito.any(Prompt.class))).thenReturn(response);
   }
 }

@@ -3,18 +3,18 @@ package com.jtruong.ai.chat;
 import com.jtruong.ai.prompts.ListPromptParser;
 import java.util.List;
 import org.slf4j.Logger;
-import org.springframework.ai.chat.ChatClient;
-import org.springframework.ai.chat.ChatResponse;
+import org.springframework.ai.chat.model.ChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public abstract class BaseChatController {
-  private final ChatClient chatClient;
+  private final ChatModel chatModel;
 
-  protected BaseChatController(ChatClient chatClient) {
-    this.chatClient = chatClient;
+  protected BaseChatController(ChatModel chatModel) {
+    this.chatModel = chatModel;
   }
 
   protected abstract Logger getLogger();
@@ -27,7 +27,7 @@ public abstract class BaseChatController {
   }
 
   protected ChatResponse callAndLogMetadata(Prompt prompt) {
-    ChatResponse response = chatClient.call(prompt);
+    ChatResponse response = chatModel.call(prompt);
     getLogger().info("Request: {}, Usage: {}", ServletUriComponentsBuilder.fromCurrentRequest().build(), response.getMetadata().getUsage());
     return response;
   }
