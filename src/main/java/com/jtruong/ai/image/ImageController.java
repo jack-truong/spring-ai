@@ -1,9 +1,14 @@
 package com.jtruong.ai.image;
 
-import java.io.File;
-import java.io.IOException;
+import com.jtruong.ai.chat.BaseChatController;
+import com.jtruong.ai.image.Images.Assertion;
+import com.jtruong.ai.image.Images.ImageAnalysisRequest;
+import com.jtruong.ai.image.Images.ImageInfo;
+import com.jtruong.ai.prompts.BeanPromptParser;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.messages.Media;
@@ -18,27 +23,28 @@ import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
 import org.springframework.ai.openai.OpenAiImageOptions;
 import org.springframework.ai.openai.metadata.OpenAiImageGenerationMetadata;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/ai/image")
-public class ImageController {
+public class ImageController extends BaseChatController {
 
   private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
   private final ImageModel imageModel;
-  private final ChatModel chatModel;
 
   public ImageController(ImageModel imageModel, ChatModel chatModel) {
+    super(chatModel);
     this.imageModel = imageModel;
-    this.chatModel = chatModel;
   }
 
   @GetMapping("/creation")
@@ -56,30 +62,36 @@ public class ImageController {
     return ResponseEntity.ok(new ImageInfo(metadata, output.getUrl(), output.getB64Json()));
   }
 
-  @GetMapping("/analysis")
-  public ResponseEntity<String> analyzeImage(@RequestParam(value = "b64Json") String b64Json) {
-    try {
-      File file = new File("/Users/jtruong/Downloads/jordan.jpg");
-      byte[] imageData = FileUtils.readFileToByteArray(file);
+  @PostMapping(value = "/analysis", consumes = "application/json")
+  public ResponseEntity<List<Assertion>> analyzeImage(@RequestBody ImageAnalysisRequest imageRequest) {
+    byte[] decodedBytes = Base64.getDecoder().decode(imageRequest.b64Json());
 
-      // todo, use other Media constructor
-      UserMessage userMessage = new UserMessage("What's in this image",
-          List.of(new Media(MimeTypeUtils.IMAGE_JPEG, imageData)));
-      ChatResponse call = chatModel.call(new Prompt(userMessage));
-      return ResponseEntity.ok(call.getResult().getOutput().getContent());
-    } catch (IOException e) {
-      throw new RestClientException("An error occurred while reading image", e);
-    }
+    String promptWithFormat = String.format("%s {format}", imageRequest.prompt());
+
+    BeanPromptParser<Assertion[]> beanPromptParser = new BeanPromptParser<>(Assertion[].class, new ByteArrayResource(promptWithFormat.getBytes()), Map.of());
+    UserMessage userMessage = new UserMessage(beanPromptParser.getPrompt().getContents(),
+        List.of(new Media(MimeTypeUtils.IMAGE_JPEG, new ByteArrayResource(decodedBytes))));
+
+    ChatResponse call = callAndLogMetadata(new Prompt(userMessage));
+    return ResponseEntity.ok(Arrays.asList(beanPromptParser.parse(call.getResult().getOutput().getContent())));
   }
 
   private static String getImageMetadata(ImageGenerationMetadata metadata) {
     // This is knowingly not ideal, but want to extract the prompt from the OpenAI revisedPrompt metadata and not return the whole string
-    return metadata instanceof OpenAiImageGenerationMetadata ? ((OpenAiImageGenerationMetadata)metadata).getRevisedPrompt() : metadata.toString();
+    return metadata instanceof OpenAiImageGenerationMetadata
+        ? ((OpenAiImageGenerationMetadata) metadata).getRevisedPrompt() : metadata.toString();
   }
 
   private ImageResponse callAndLogMetadata(ImagePrompt prompt) {
     ImageResponse response = imageModel.call(prompt);
-    logger.info("Request: {}, Prompt metadata: {}", ServletUriComponentsBuilder.fromCurrentRequest().build(), getImageMetadata(response.getResult().getMetadata()));
+    logger.info("Request: {}, Prompt metadata: {}",
+        ServletUriComponentsBuilder.fromCurrentRequest().build(),
+        getImageMetadata(response.getResult().getMetadata()));
     return response;
+  }
+
+  @Override
+  protected Logger getLogger() {
+    return logger;
   }
 }
