@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 public abstract class BaseChatController {
-  private final ChatModel chatModel;
+  protected final ChatModel chatModel;
 
   protected BaseChatController(ChatModel chatModel) {
     this.chatModel = chatModel;

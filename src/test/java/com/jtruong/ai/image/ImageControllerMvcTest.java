@@ -7,6 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jtruong.ai.chat.BaseChatControllerTest;
+import com.jtruong.ai.image.Images.Assertion;
+import com.jtruong.ai.image.Images.ImageInfo;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.ai.image.Image;
@@ -27,7 +33,7 @@ import org.springframework.web.client.RestClientException;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ImageControllerMvcTest {
+public class ImageControllerMvcTest extends BaseChatControllerTest {
 
   @Autowired
   private MockMvc mvc;
@@ -36,7 +42,7 @@ public class ImageControllerMvcTest {
   protected ImageModel imageModel;
 
   @Test
-  public void image() throws Exception {
+  public void creation() throws Exception {
     // given
     String imageUrl = "https://imagepath.com";
     String revisedPrompt = "This is the revised prompt";
@@ -46,7 +52,8 @@ public class ImageControllerMvcTest {
 
     // when
     ResultActions result = mvc.perform(
-        MockMvcRequestBuilders.get("/ai/image/creation?prompt=hello").accept(MediaType.APPLICATION_JSON));
+        MockMvcRequestBuilders.get("/ai/image/creation?prompt=hello")
+            .accept(MediaType.APPLICATION_JSON));
 
     // then
     result
@@ -55,12 +62,39 @@ public class ImageControllerMvcTest {
   }
 
   @Test
+  public void analysis() throws Exception {
+    // given
+    List<Assertion> expectedResponse =
+        List.of(
+            new Assertion("Image contains a dog", "There's a dog"),
+            new Assertion("Image contains a flower", "There's a flower")
+        );
+
+    setupMockChatResponse(new ObjectMapper().writeValueAsString(expectedResponse));
+
+    // when
+    ResultActions result = mvc.perform(
+        MockMvcRequestBuilders.post("/ai/image/analysis")
+            .content(new ObjectMapper().writeValueAsString(
+                Map.of("prompt", "this is the prompt", "b64Json",
+                    Base64.getEncoder().encodeToString("the image".getBytes()))
+            )).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON));
+
+    // then
+    result
+        .andExpect(status().isOk())
+        .andExpect(
+            content().string(equalTo(new ObjectMapper().writeValueAsString(expectedResponse))));
+  }
+
+  @Test
   public void testPromptWithException() throws Exception {
     // given
     when(imageModel.call(Mockito.any(ImagePrompt.class))).thenThrow(new RestClientException(""));
 
     // when
-    ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/image/creation?prompt=hello").accept(MediaType.APPLICATION_JSON));
+    ResultActions result = mvc.perform(MockMvcRequestBuilders.get("/ai/image/creation?prompt=hello")
+        .accept(MediaType.APPLICATION_JSON));
 
     // then
     result
@@ -71,7 +105,8 @@ public class ImageControllerMvcTest {
     ImageResponse imageResponse = mock(ImageResponse.class);
     ImageGeneration imageGeneration = mock(ImageGeneration.class);
     Image image = mock(Image.class);
-    OpenAiImageGenerationMetadata imageGenerationMetadata = mock(OpenAiImageGenerationMetadata.class);
+    OpenAiImageGenerationMetadata imageGenerationMetadata = mock(
+        OpenAiImageGenerationMetadata.class);
 
     when(imageGeneration.getOutput()).thenReturn(image);
     when(image.getUrl()).thenReturn(url);
