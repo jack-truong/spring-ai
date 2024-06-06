@@ -2,6 +2,9 @@
 * This is a POC that leverages the Spring AI libraries to demonstrate their capabilities through a REST API.
 * Specifically, this repository accesses OpenAI as its AI provider. 
 
+# Demo
+* A graphical demonstration of the API can be found [here](https://github.com/jack-truong/spring-ai-frontend). 
+
 # Setup
 * Running the server requires getting a few API keys to access the services. Those keys
 should be exported as environment variables in [this file](https://github.com/jack-truong/spring-ai/blob/main/src/main/resources/application.properties).
