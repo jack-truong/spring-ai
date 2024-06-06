@@ -1,11 +1,10 @@
 package com.jtruong.ai.image;
 
 import com.jtruong.ai.chat.BaseChatController;
-import com.jtruong.ai.image.Images.Assertion;
 import com.jtruong.ai.image.Images.ImageAnalysisRequest;
+import com.jtruong.ai.image.Images.ImageAnalysisResponse;
 import com.jtruong.ai.image.Images.ImageInfo;
 import com.jtruong.ai.prompts.BeanPromptParser;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -63,17 +62,17 @@ public class ImageController extends BaseChatController {
   }
 
   @PostMapping(value = "/analysis", consumes = "application/json")
-  public ResponseEntity<List<Assertion>> analyzeImage(@RequestBody ImageAnalysisRequest imageRequest) {
+  public ResponseEntity<ImageAnalysisResponse> analyzeImage(@RequestBody ImageAnalysisRequest imageRequest) {
     byte[] decodedBytes = Base64.getDecoder().decode(imageRequest.b64Json());
 
     String promptWithFormat = String.format("%s {format}", imageRequest.prompt());
 
-    BeanPromptParser<Assertion[]> beanPromptParser = new BeanPromptParser<>(Assertion[].class, new ByteArrayResource(promptWithFormat.getBytes()), Map.of());
+    BeanPromptParser<ImageAnalysisResponse> beanPromptParser = new BeanPromptParser<>(ImageAnalysisResponse.class, new ByteArrayResource(promptWithFormat.getBytes()), Map.of());
     UserMessage userMessage = new UserMessage(beanPromptParser.getPrompt().getContents(),
         List.of(new Media(MimeTypeUtils.IMAGE_JPEG, new ByteArrayResource(decodedBytes))));
 
     ChatResponse call = callAndLogMetadata(new Prompt(userMessage));
-    return ResponseEntity.ok(Arrays.asList(beanPromptParser.parse(call.getResult().getOutput().getContent())));
+    return ResponseEntity.ok(beanPromptParser.parse(call.getResult().getOutput().getContent()));
   }
 
   private static String getImageMetadata(ImageGenerationMetadata metadata) {
