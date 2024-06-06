@@ -8,4 +8,5 @@ public interface Images {
   record Assertion(String assertion, String reasoning) {}
 
   record ImageAnalysisRequest(String prompt, String b64Json) {}
+  record ImageAnalysisResponse(List<String> verboseObservations, String finalConclusion) {}
 }
