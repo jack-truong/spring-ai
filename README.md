@@ -28,7 +28,8 @@ should be exported as environment variables in [this file](https://github.com/ja
 * ## ImageController
   This interfaces with DALL·E 3, which is OpenAI's image generation model.  It can take arbitrary prompts
   and generate complex images based on the tokens used to describe the scene.
-  * Request an image based on the passed in prompt.  The image can be returned as a URL or b64_json.
+  * Request an image to be created based on the passed in prompt.  The image can be returned as a URL or b64_json.
+  * Request an image to be analyzed based on the prompt and passed in image.  This uses GPT-4o's vision analysis capabilities.
   * Calls to this endpoint log the resultant prompt that OpenAI uses to create the image.
   
 * ## StockController
