@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jtruong.ai.chat.BaseChatControllerTest;
-import com.jtruong.ai.image.Images.Assertion;
+import com.jtruong.ai.image.Images.ImageAnalysisResponse;
 import com.jtruong.ai.image.Images.ImageInfo;
 import java.util.Base64;
 import java.util.List;
@@ -64,11 +64,12 @@ public class ImageControllerMvcTest extends BaseChatControllerTest {
   @Test
   public void analysis() throws Exception {
     // given
-    List<Assertion> expectedResponse =
+    ImageAnalysisResponse expectedResponse = new ImageAnalysisResponse(
         List.of(
-            new Assertion("Image contains a dog", "There's a dog"),
-            new Assertion("Image contains a flower", "There's a flower")
-        );
+            "Image contains a dog", "There's a dog"
+        ),
+        "The dog is panting"
+    );
 
     setupMockChatResponse(new ObjectMapper().writeValueAsString(expectedResponse));
 
