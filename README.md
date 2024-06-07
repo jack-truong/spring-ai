@@ -13,6 +13,10 @@ should be exported as environment variables in [this file](https://github.com/ja
   * FMP (https://site.financialmodelingprep.com/developer/docs/dashboard)
     * `spring.ai.stock.api-key=${STOCK_API_KEY}`
 
+# Running
+  * You can run this server in IntelliJ by running the AiApplication configuration.
+  * You can run this server in a terminal by running `./gradlew bootRun`.
+
 # Controllers
 * ## ChatController
   This is the generic chat controller that lets you submit any string prompt to get an AI string response back from OpenAI.
