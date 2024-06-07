@@ -45,5 +45,7 @@ should be exported as environment variables in [this file](https://github.com/ja
 
   * Request a randomized list of stocks from OpenAI.
   * Request recent historical information on the performance of a particular stock over a given time period.
-  * Request a "recommendation" from the AI model on what the best stock purchase would be based on the last X days.
+  * Request a "recommendation" from the AI model on what the best stock purchase would be based on the last X days from 
+  the current date. Because GPT-4o does not have access to real-time data, this causes OpenAI to instruct the backend to make calls 
+  to an external stocks REST API service to provide the information that chat model needs to continue to answer the question.
   * Calls to OpenAI are logged to show how many prompt tokens they are consuming.
