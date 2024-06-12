@@ -2,8 +2,8 @@ package com.jtruong.ai.chat.dog;
 
 import com.jtruong.ai.chat.BaseChatController;
 import com.jtruong.ai.chat.Color;
-import com.jtruong.ai.prompts.BeanPromptParser;
-import com.jtruong.ai.prompts.ListPromptParser;
+import com.jtruong.ai.prompts.BeanPromptConverter;
+import com.jtruong.ai.prompts.ListPromptConverter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +42,10 @@ public class DogChatController extends BaseChatController {
 
   @GetMapping("/breeds")
   public ResponseEntity<List<String>> getBreeds() {
-    ListPromptParser listPromptParser = new ListPromptParser(breedsPrompt);
+    ListPromptConverter listPromptConverter = new ListPromptConverter(breedsPrompt);
 
-    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
-    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
+    ChatResponse response = callAndLogMetadata(listPromptConverter.getPrompt());
+    return ResponseEntity.ok(listPromptConverter.convert(response.getResult().getOutput().getContent()));
   }
 
   @GetMapping("/characteristics")
@@ -63,16 +63,16 @@ public class DogChatController extends BaseChatController {
   ) {
     validateCharacteristics(characteristics);
 
-    BeanPromptParser<BreedInfo> beanPromptParser = new BeanPromptParser<>(BreedInfo.class,
+    BeanPromptConverter<BreedInfo> beanPromptConverter = new BeanPromptConverter<>(BreedInfo.class,
         breedCharacteristicsPrompt,
         Map.of(
             "breed", breed,
             "characteristics", characteristics
         )
     );
-    ChatResponse response = callAndLogMetadata(beanPromptParser.getPrompt());
+    ChatResponse response = callAndLogMetadata(beanPromptConverter.getPrompt());
 
-    return ResponseEntity.ok(beanPromptParser.parse(response.getResult().getOutput().getContent()));
+    return ResponseEntity.ok(beanPromptConverter.convert(response.getResult().getOutput().getContent()));
   }
 
   @GetMapping("/image-prompt")

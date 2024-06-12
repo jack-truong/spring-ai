@@ -4,7 +4,7 @@ import com.jtruong.ai.chat.BaseChatController;
 import com.jtruong.ai.image.Images.ImageAnalysisRequest;
 import com.jtruong.ai.image.Images.ImageAnalysisResponse;
 import com.jtruong.ai.image.Images.ImageInfo;
-import com.jtruong.ai.prompts.BeanPromptParser;
+import com.jtruong.ai.prompts.BeanPromptConverter;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
@@ -67,12 +67,12 @@ public class ImageController extends BaseChatController {
 
     String promptWithFormat = String.format("%s {format}", imageRequest.prompt());
 
-    BeanPromptParser<ImageAnalysisResponse> beanPromptParser = new BeanPromptParser<>(ImageAnalysisResponse.class, new ByteArrayResource(promptWithFormat.getBytes()), Map.of());
-    UserMessage userMessage = new UserMessage(beanPromptParser.getPrompt().getContents(),
+    BeanPromptConverter<ImageAnalysisResponse> beanPromptConverter = new BeanPromptConverter<>(ImageAnalysisResponse.class, new ByteArrayResource(promptWithFormat.getBytes()), Map.of());
+    UserMessage userMessage = new UserMessage(beanPromptConverter.getPrompt().getContents(),
         List.of(new Media(MimeTypeUtils.IMAGE_JPEG, new ByteArrayResource(decodedBytes))));
 
     ChatResponse call = callAndLogMetadata(new Prompt(userMessage));
-    return ResponseEntity.ok(beanPromptParser.parse(call.getResult().getOutput().getContent()));
+    return ResponseEntity.ok(beanPromptConverter.convert(call.getResult().getOutput().getContent()));
   }
 
   private static String getImageMetadata(ImageGenerationMetadata metadata) {
