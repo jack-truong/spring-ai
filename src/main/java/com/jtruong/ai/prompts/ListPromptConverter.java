@@ -3,14 +3,14 @@ package com.jtruong.ai.prompts;
 import java.util.Map;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.parser.ListOutputParser;
+import org.springframework.ai.converter.ListOutputConverter;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.io.Resource;
 
-public class ListPromptParser extends ListOutputParser {
+public class ListPromptConverter extends ListOutputConverter {
   private final Resource prompt;
 
-  public ListPromptParser(Resource prompt) {
+  public ListPromptConverter(Resource prompt) {
     super(new DefaultConversionService());
     this.prompt = prompt;
   }

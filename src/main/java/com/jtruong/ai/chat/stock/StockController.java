@@ -4,7 +4,7 @@ import com.jtruong.ai.chat.BaseChatController;
 import com.jtruong.ai.chat.stock.Stocks.Stock;
 import com.jtruong.ai.chat.stock.Stocks.StockHistorical;
 import com.jtruong.ai.chat.stock.Stocks.StockRecommendation;
-import com.jtruong.ai.prompts.BeanPromptParser;
+import com.jtruong.ai.prompts.BeanPromptConverter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -47,14 +47,14 @@ public class StockController extends BaseChatController {
 
   @GetMapping("/stocks")
   public ResponseEntity<List<Stock>> getStocks() {
-    BeanPromptParser<Stock[]> beanPromptParser = new BeanPromptParser<>(Stock[].class,
+    BeanPromptConverter<Stock[]> beanPromptConverter = new BeanPromptConverter<>(Stock[].class,
         stocksPrompt,
         Map.of()
     );
-    ChatResponse response = callAndLogMetadata(beanPromptParser.getPrompt());
+    ChatResponse response = callAndLogMetadata(beanPromptConverter.getPrompt());
 
     return ResponseEntity.ok(Arrays.asList(
-        beanPromptParser.parse(response.getResult().getOutput().getContent())));
+        beanPromptConverter.convert(response.getResult().getOutput().getContent())));
   }
 
   @GetMapping("/historical/{symbol}")
@@ -62,7 +62,7 @@ public class StockController extends BaseChatController {
       @PathVariable(value = "symbol") String symbol,
       @RequestParam(value = "numberOfDays") Integer numberOfDays
   ) {
-    BeanPromptParser<StockHistorical> beanPromptParser = new BeanPromptParser<>(
+    BeanPromptConverter<StockHistorical> beanPromptConverter = new BeanPromptConverter<>(
         StockHistorical.class,
         stocksHistoricalPrompt,
         Map.of(
@@ -75,9 +75,9 @@ public class StockController extends BaseChatController {
     OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
         .withFunction("historicalStockPricesFunction")
         .build();
-    ChatResponse response = callAndLogMetadata(beanPromptParser.getPrompt(chatOptions));
+    ChatResponse response = callAndLogMetadata(beanPromptConverter.getPrompt(chatOptions));
 
-    return ResponseEntity.ok(beanPromptParser.parse(response.getResult().getOutput().getContent()));
+    return ResponseEntity.ok(beanPromptConverter.convert(response.getResult().getOutput().getContent()));
   }
 
   @GetMapping("/historical/gains")
@@ -85,7 +85,7 @@ public class StockController extends BaseChatController {
       @RequestParam(value = "symbols") List<String> symbols,
       @RequestParam(value = "numberOfDays") Integer numberOfDays
   ) {
-    BeanPromptParser<StockRecommendation> beanPromptParser = new BeanPromptParser<>(
+    BeanPromptConverter<StockRecommendation> beanPromptConverter = new BeanPromptConverter<>(
         StockRecommendation.class,
         stocksHistoricalGainsPrompt,
         Map.of(
@@ -98,9 +98,9 @@ public class StockController extends BaseChatController {
     OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
         .withFunction("historicalStockPricesFunction")
         .build();
-    ChatResponse response = callAndLogMetadata(beanPromptParser.getPrompt(chatOptions));
+    ChatResponse response = callAndLogMetadata(beanPromptConverter.getPrompt(chatOptions));
 
-    return ResponseEntity.ok(beanPromptParser.parse(response.getResult().getOutput().getContent()));
+    return ResponseEntity.ok(beanPromptConverter.convert(response.getResult().getOutput().getContent()));
   }
 
   @Override

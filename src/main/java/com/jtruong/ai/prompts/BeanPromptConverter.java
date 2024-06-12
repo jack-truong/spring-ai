@@ -4,15 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.converter.BeanOutputConverter;
 import org.springframework.ai.openai.OpenAiChatOptions;
-import org.springframework.ai.parser.BeanOutputParser;
 import org.springframework.core.io.Resource;
 
-public class BeanPromptParser<T> extends BeanOutputParser<T> {
+public class BeanPromptConverter<T> extends BeanOutputConverter<T> {
   private final Resource prompt;
   private final Map<String, Object> promptMappings;
 
-  public BeanPromptParser(Class<T> clazz, Resource prompt, Map<String, Object> promptMappings) {
+  public BeanPromptConverter(Class<T> clazz, Resource prompt, Map<String, Object> promptMappings) {
     super(clazz);
     this.prompt = prompt;
     this.promptMappings = promptMappings;

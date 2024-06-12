@@ -1,6 +1,6 @@
 package com.jtruong.ai.chat;
 
-import com.jtruong.ai.prompts.ListPromptParser;
+import com.jtruong.ai.prompts.ListPromptConverter;
 import java.util.List;
 import org.slf4j.Logger;
 import org.springframework.ai.chat.model.ChatModel;
@@ -20,10 +20,10 @@ public abstract class BaseChatController {
   protected abstract Logger getLogger();
 
   protected ResponseEntity<List<String>> getListResponse(Resource resource) {
-    ListPromptParser listPromptParser = new ListPromptParser(resource);
+    ListPromptConverter listPromptConverter = new ListPromptConverter(resource);
 
-    ChatResponse response = callAndLogMetadata(listPromptParser.getPrompt());
-    return ResponseEntity.ok(listPromptParser.parse(response.getResult().getOutput().getContent()));
+    ChatResponse response = callAndLogMetadata(listPromptConverter.getPrompt());
+    return ResponseEntity.ok(listPromptConverter.convert(response.getResult().getOutput().getContent()));
   }
 
   protected ChatResponse callAndLogMetadata(Prompt prompt) {
