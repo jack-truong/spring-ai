@@ -14,8 +14,13 @@ should be exported as environment variables in [this file](https://github.com/ja
     * `spring.ai.stock.api-key=${STOCK_API_KEY}`
 
 # Running
-  * You can run this server in IntelliJ by running the AiApplication configuration.
-  * You can run this server in a terminal by running `./gradlew bootRun`.
+  * This project is dependent on connecting to a locally running Postgres instance.  There's a 
+    gradle task called `launchPostgres` that can be run to build and deploy the prepopulated Chinook 
+    database using Docker.
+  * You can run the server in IntelliJ by running the AiApplication configuration.
+  * You can run the server in a terminal by running `./gradlew bootRun`.
+    * The `bootRun` task is dependent on the `launchPostgres` task, so it should automatically start
+    a docker container with the pre-populated Chinook database if it isn't already running.
 
 # Controllers
 * ## ChatController

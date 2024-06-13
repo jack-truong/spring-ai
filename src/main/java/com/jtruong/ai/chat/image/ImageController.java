@@ -1,9 +1,9 @@
-package com.jtruong.ai.image;
+package com.jtruong.ai.chat.image;
 
 import com.jtruong.ai.chat.BaseChatController;
-import com.jtruong.ai.image.Images.ImageAnalysisRequest;
-import com.jtruong.ai.image.Images.ImageAnalysisResponse;
-import com.jtruong.ai.image.Images.ImageInfo;
+import com.jtruong.ai.chat.image.Images.ImageAnalysisRequest;
+import com.jtruong.ai.chat.image.Images.ImageAnalysisResponse;
+import com.jtruong.ai.chat.image.Images.ImageInfo;
 import com.jtruong.ai.prompts.BeanPromptConverter;
 import java.util.Base64;
 import java.util.List;
