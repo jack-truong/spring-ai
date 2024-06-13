@@ -1,4 +1,4 @@
-package com.jtruong.ai.image;
+package com.jtruong.ai.chat.image;
 
 import java.util.List;
 

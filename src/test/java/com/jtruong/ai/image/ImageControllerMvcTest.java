@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jtruong.ai.chat.BaseChatControllerTest;
-import com.jtruong.ai.image.Images.ImageAnalysisResponse;
-import com.jtruong.ai.image.Images.ImageInfo;
+import com.jtruong.ai.chat.image.Images.ImageAnalysisResponse;
+import com.jtruong.ai.chat.image.Images.ImageInfo;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;

@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
 	java
 	id("org.springframework.boot") version "3.3.0"
@@ -36,4 +38,13 @@ dependencyManagement {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+task<Exec>("launchPostgres") {
+	workingDir("./db")
+	commandLine("./launch_postgres.sh")
+}
+
+tasks.withType<BootRun> {
+	dependsOn("launchPostgres")
 }
