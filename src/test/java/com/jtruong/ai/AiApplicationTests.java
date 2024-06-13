@@ -3,6 +3,7 @@ package com.jtruong.ai;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.jtruong.ai.chat.ChatController;
+import com.jtruong.ai.chat.db.DbController;
 import com.jtruong.ai.chat.dog.DogChatController;
 import com.jtruong.ai.chat.image.ImageController;
 import com.jtruong.ai.chat.stock.StockController;
@@ -26,11 +27,15 @@ class AiApplicationTests {
   @Autowired
   private StockController stockController;
 
+  @Autowired
+  private DbController dbController;
+
 	@Test
 	void contextLoads() {
 		assertThat(chatController).isNotNull();
 		assertThat(imageController).isNotNull();
 		assertThat(dogChatController).isNotNull();
 		assertThat(stockController).isNotNull();
+		assertThat(dbController).isNotNull();
 	}
 }
