@@ -24,8 +24,10 @@ extra["springAiVersion"] = "1.0.0-M1"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.ai:spring-ai-openai-spring-boot-starter")
 	implementation("commons-io:commons-io:2.16.1")
+	runtimeOnly("org.postgresql:postgresql")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
