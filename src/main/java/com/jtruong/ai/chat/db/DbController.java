@@ -19,6 +19,8 @@ import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.converter.MapOutputConverter;
+import org.springframework.ai.openai.OpenAiChatOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -83,14 +85,27 @@ public class DbController extends BaseChatController {
   }
 
   @GetMapping("/query")
-  public ResponseEntity<String> query(@RequestParam(value="query") String query ){
+  public ResponseEntity<Map<String, Object>> query(@RequestParam(value="query") String query ){
+    MapOutputConverter mapOutputConverter = new MapOutputConverter();
     PromptTemplate promptTemplate = new PromptTemplate(dbQueryPrompt);
-    Prompt chatPrompt = promptTemplate.create(Map.of("schema", chinookSchemaString, "query", query));
+    Prompt chatPrompt = promptTemplate.create(
+        Map.of(
+            "schema", chinookSchemaString,
+            "query", query,
+            "format", mapOutputConverter.getFormat()
+        )
+    );
 
     List<Message> messages = new ArrayList<>(chatPrompt.getInstructions());
     messages.add(new SystemMessage(dbSystemPromptString));
-    ChatResponse response = callAndLogMetadata(new Prompt(messages));
-    return ResponseEntity.ok(response.getResult().getOutput().getContent());
+
+    OpenAiChatOptions chatOptions = OpenAiChatOptions.builder()
+        .withFunction("queryResultsFromDatabase")
+        .build();
+    ChatResponse response = callAndLogMetadata(new Prompt(messages, chatOptions));
+
+    String content = response.getResult().getOutput().getContent().replace("```", "").replace("json", "");
+    return ResponseEntity.ok(mapOutputConverter.convert(content));
   }
 
 

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jtruong.ai.chat.BaseChatControllerTest;
 import com.jtruong.ai.chat.db.DbRecords.Customer;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -59,15 +60,16 @@ class DbControllerTest extends BaseChatControllerTest {
   @Test
   public void dbQuery() throws Exception {
     // given
-    setupMockChatResponse("answer");
+    String expectedResponse = new ObjectMapper().writeValueAsString(Map.of("answer", "value"));
+    setupMockChatResponse(expectedResponse);
 
     // when
     ResultActions result = mvc.perform(
-        MockMvcRequestBuilders.get("/ai/db/query?query=test").accept(MediaType.TEXT_PLAIN));
+        MockMvcRequestBuilders.get("/ai/db/query?query=test").accept(MediaType.APPLICATION_JSON));
 
     // then
     result
         .andExpect(status().isOk())
-        .andExpect(content().string(equalTo("answer")));
+        .andExpect(content().string(expectedResponse));
   }
 }

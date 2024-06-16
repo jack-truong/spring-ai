@@ -4,3 +4,5 @@ Given the schema in the SCHEMA section, construct a query that answers the quest
 
 SCHEMA:
 {schema}
+
+{format}
