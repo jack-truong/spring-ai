@@ -1,5 +1,11 @@
 package com.jtruong.ai.chat.db;
 
+import java.util.List;
+import java.util.Map;
+
 public interface DbRecords {
-  public record Customer(String firstName, String lastName) { }
+  record Customer(String firstName, String lastName) { }
+
+  record Request(String query) {}
+  record Response(List<Map<String, Object>> values) {}
 }

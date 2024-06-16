@@ -35,7 +35,8 @@ class StockControllerMvcTest extends BaseChatControllerTest {
         new Stock("AMZN", "Amazon"),
         new Stock("GOOGL", "Google")
     );
-    setupMockChatResponse(new ObjectMapper().writeValueAsString(symbols));
+    String expectedResponse = new ObjectMapper().writeValueAsString(symbols);
+    setupMockChatResponse(expectedResponse);
 
     // when
     ResultActions result = mvc.perform(
@@ -44,7 +45,7 @@ class StockControllerMvcTest extends BaseChatControllerTest {
     // then
     result
         .andExpect(status().isOk())
-        .andExpect(content().string(equalTo(new ObjectMapper().writeValueAsString(symbols))));
+        .andExpect(content().string(equalTo(expectedResponse)));
   }
 
   @Test
