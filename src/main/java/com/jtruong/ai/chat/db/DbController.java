@@ -50,10 +50,10 @@ public class DbController extends BaseChatController {
   @Value("classpath:/prompts/dbQuery.st")
   private Resource dbQueryPrompt;
 
-  @Value("classpath:/chinook_schema.sql")
-  private Resource chinookSchema;
+  @Value("classpath:/northwind_schema.sql")
+  private Resource northwindSchema;
 
-  private String chinookSchemaString;
+  private String northwindSchemaString;
 
   private final JdbcClient jdbcClient;
 
@@ -69,10 +69,10 @@ public class DbController extends BaseChatController {
     } catch (IOException e) {
       logger.error("An error occurred trying to read the DB system prompt", e);
     }
-    try (Reader reader = new InputStreamReader(chinookSchema.getInputStream(), UTF_8)) {
-      chinookSchemaString = FileCopyUtils.copyToString(reader);
+    try (Reader reader = new InputStreamReader(northwindSchema.getInputStream(), UTF_8)) {
+      northwindSchemaString = FileCopyUtils.copyToString(reader);
     } catch (IOException e) {
-      logger.error("An error occurred trying to read the Chinook database schema", e);
+      logger.error("An error occurred trying to read the Northwind database schema", e);
     }
   }
 
@@ -90,7 +90,7 @@ public class DbController extends BaseChatController {
     PromptTemplate promptTemplate = new PromptTemplate(dbQueryPrompt);
     Prompt chatPrompt = promptTemplate.create(
         Map.of(
-            "schema", chinookSchemaString,
+            "schema", northwindSchemaString,
             "query", query,
             "format", mapOutputConverter.getFormat()
         )

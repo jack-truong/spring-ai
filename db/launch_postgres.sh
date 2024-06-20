@@ -1,7 +1,7 @@
 #!/bin/bash
 
 USER=$(whoami)
-DB_IMAGE="chinook-postgres"
+DB_IMAGE="northwind-postgres"
 CONTAINER_NAME="postgres_ai_demo"
 
 docker build . -t "${USER}"/"${DB_IMAGE}"
