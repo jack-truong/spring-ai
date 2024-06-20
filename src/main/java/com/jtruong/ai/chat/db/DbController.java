@@ -3,7 +3,8 @@ package com.jtruong.ai.chat.db;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.jtruong.ai.chat.BaseChatController;
-import com.jtruong.ai.chat.db.DbRecords.DbResponse;
+import com.jtruong.ai.chat.db.DbRecords.DbQueryResponse;
+import com.jtruong.ai.chat.db.DbRecords.DbSchemaImageResponse;
 import com.jtruong.ai.prompts.BeanPromptConverter;
 import jakarta.annotation.PostConstruct;
 import java.io.IOException;
@@ -48,28 +49,30 @@ public class DbController extends BaseChatController {
 
   private String northwindSchemaString;
 
-  public DbController(ChatModel chatModel) {
+  private final DbSchemaImageLoader dbSchemaImageLoader;
+
+  private String northwindSchemaDiagramString;
+
+  public DbController(ChatModel chatModel, DbSchemaImageLoader dbSchemaImageLoader) {
     super(chatModel);
+    this.dbSchemaImageLoader = dbSchemaImageLoader;
   }
 
   @PostConstruct
   public void init() {
-    try (Reader reader = new InputStreamReader(dbSystemPrompt.getInputStream(), UTF_8)) {
-      dbSystemPromptString = FileCopyUtils.copyToString(reader);
-    } catch (IOException e) {
-      logger.error("An error occurred trying to read the DB system prompt", e);
-    }
-    try (Reader reader = new InputStreamReader(northwindSchema.getInputStream(), UTF_8)) {
-      northwindSchemaString = FileCopyUtils.copyToString(reader);
-    } catch (IOException e) {
-      logger.error("An error occurred trying to read the Northwind database schema", e);
-    }
+    loadDbSystemPromptString();
+    loadDbSchemaString();
+  }
+
+  @GetMapping("/schema-image")
+  public ResponseEntity<DbSchemaImageResponse> schemaImage() {
+    return ResponseEntity.ok(new DbSchemaImageResponse(loadDbSchemaDiagramString()));
   }
 
   @GetMapping("/query")
-  public ResponseEntity<DbResponse> query(@RequestParam(value = "query") String query) {
-    BeanPromptConverter<DbResponse> beanPromptConverter = new BeanPromptConverter<>(
-        DbResponse.class,
+  public ResponseEntity<DbQueryResponse> query(@RequestParam(value = "query") String query) {
+    BeanPromptConverter<DbQueryResponse> beanPromptConverter = new BeanPromptConverter<>(
+        DbQueryResponse.class,
         dbQueryPrompt,
         Map.of(
             "schema", northwindSchemaString,
@@ -90,9 +93,35 @@ public class DbController extends BaseChatController {
     return ResponseEntity.ok(beanPromptConverter.convert(content));
   }
 
-
   @Override
   protected Logger getLogger() {
     return logger;
+  }
+
+  private void loadDbSchemaString() {
+    try (Reader reader = new InputStreamReader(northwindSchema.getInputStream(), UTF_8)) {
+      northwindSchemaString = FileCopyUtils.copyToString(reader);
+    } catch (IOException e) {
+      logger.error("An error occurred trying to read the Northwind database schema", e);
+    }
+  }
+
+  private void loadDbSystemPromptString() {
+    try (Reader reader = new InputStreamReader(dbSystemPrompt.getInputStream(), UTF_8)) {
+      dbSystemPromptString = FileCopyUtils.copyToString(reader);
+    } catch (IOException e) {
+      logger.error("An error occurred trying to read the DB system prompt", e);
+    }
+  }
+
+  private String loadDbSchemaDiagramString() {
+    try {
+      if (northwindSchemaDiagramString == null) {
+        northwindSchemaDiagramString = dbSchemaImageLoader.load();
+      }
+    } catch (IOException e) {
+      logger.error("An error occurred trying to read the DB schema diagram", e);
+    }
+    return northwindSchemaDiagramString;
   }
 }
