@@ -8,4 +8,5 @@ public interface DbRecords {
 
   record Request(String query) {}
   record Response(List<Map<String, Object>> values) {}
+  record DbResponse(String prettyPrintedQuery, List<Map<String, Object>> values) {}
 }
