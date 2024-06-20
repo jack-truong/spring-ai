@@ -40,9 +40,10 @@ class DBFunctionTest {
   public void testApply() throws JsonProcessingException {
     // given
     List<Map<String, Object>> results = List.of(
-        Map.of("column_1", "value1"),
-        Map.of("column_2", "value2")
+        Map.of("row_1_col_1", "value_1"),
+        Map.of("row_2_col_1", "value_2")
     );
+
     String query = "the sql query";
     StatementSpec statementSpec = mock(StatementSpec.class);
     when(jdbcClient.sql(query)).thenReturn(statementSpec);
