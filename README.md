@@ -66,3 +66,17 @@ should be exported as environment variables in [this file](https://github.com/ja
   the current date. Because GPT-4o does not have access to real-time data, this causes OpenAI to instruct the backend to make calls 
   to an external stocks REST API service to provide the information that chat model needs to continue to answer the question.
   * Calls to OpenAI are logged to show how many prompt tokens they are consuming.
+
+* ## DbController
+  This is the controller that returns information specific to the Chinook database. 
+
+  This controller utilizes the fact that Spring-AI lets you provide functions that can provide this real-time data as additional context for the AI model
+  to answer questions.  This controller provides such a function to call allow queries to be run against the Chinook database. This is just a demonstration that
+  the OpenAI model can be given contextual information about the database (its schema) and produce a query that attempts to answer the question passed in.  This would
+  not be a truly practical solution to pass in schema on every request, but it does show that if given enough contextual information OpenAI can produce results specific
+  to your personalized data set.
+
+  * Questions like "What is the most popular album and its songs?" and "Give me all of the customers and employees that live in TX and their addresses" can be asked.
+  * The controller is specifically instructed to disallow any questions that would attempt to modify the database.  In other words, only read-only queries are allowed.
+  * As an additional safeguard, the function provided also validates that the query passed in does not contain any disallowed keywords that would modify the database.
+  * Calls to OpenAI are logged to show how many prompt tokens they are consuming.
