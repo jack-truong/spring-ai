@@ -50,10 +50,7 @@ class DbControllerTest extends BaseChatControllerTest {
     // given
     DbQueryResponse dbResponse = new DbQueryResponse(
         "the query",
-        List.of(
-            Map.of("row_1_col_1", "value_1"),
-            Map.of("row_2_col_1", "value_2")
-        )
+        "The final answer"
     );
     String expectedResponse = new ObjectMapper().writeValueAsString(dbResponse);
     setupMockChatResponse(expectedResponse);

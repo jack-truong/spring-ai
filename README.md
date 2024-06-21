@@ -76,7 +76,9 @@ should be exported as environment variables in [this file](https://github.com/ja
   not be a truly practical solution to pass in schema on every request, but it does show that if given enough contextual information OpenAI can produce results specific
   to your personalized data set.
 
-  * Questions like "What is the most popular album and its songs?" and "Give me all of the customers and employees that live in TX and their addresses" can be asked.
-  * The controller is specifically instructed to disallow any questions that would attempt to modify the database.  In other words, only read-only queries are allowed.
-  * As an additional safeguard, the function provided also validates that the query passed in does not contain any disallowed keywords that would modify the database.
-  * Calls to OpenAI are logged to show how many prompt tokens they are consuming.
+  * There is an endpoint to request a base64 encoded image of the database schema.
+  * There is an endpoint to ask questions about the database.
+    * Questions like "What is the most popular product and its category?" and "Which customer has the highest total purchases and what did they order the most?" can be asked.
+    * The controller is specifically instructed to disallow any questions that would attempt to modify the database.  In other words, only read-only queries are allowed.
+    * As an additional safeguard, the function provided also validates that the query passed in does not contain any disallowed keywords that would modify the database.
+    * Calls to OpenAI are logged to show how many prompt tokens they are consuming.
