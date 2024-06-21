@@ -71,7 +71,7 @@ should be exported as environment variables in [this file](https://github.com/ja
   This is the controller that returns information specific to the Northwind database. 
 
   This controller utilizes the fact that Spring-AI lets you provide functions that can provide this real-time data as additional context for the AI model
-  to answer questions.  This controller provides such a function to call allow queries to be run against the Northwind database. This is just a demonstration that
+  to answer questions.  This controller provides such a function to call to allow queries to be run against the Northwind database. This is just a demonstration that
   the OpenAI model can be given contextual information about the database (its schema) and produce a query that attempts to answer the question passed in.  This would
   not be a truly practical solution to pass in schema on every request, but it does show that if given enough contextual information OpenAI can produce results specific
   to your personalized data set.
